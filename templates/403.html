@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <script src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/tether.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <title>Unauthorized</title>
+    </head>
+	<body>
+        <div class="container text-center">
+            <img class="img-fluid" id="horn1" src="{{ url_for('static', filename='assets/horn.png') }}" />
+            Looks like you don't currently have access.
+        </div>
+	</body>
+</html>

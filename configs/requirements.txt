@@ -1,0 +1,10 @@
+flask
+flask-mysql
+ConfigParser
+requests
+datetime
+logging
+uwsgi
+yagmail
+mysql-connector==2.1.4
+SQLAlchemy

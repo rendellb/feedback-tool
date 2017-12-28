@@ -1,0 +1,20 @@
+<div class="card m-2" id="card%num%">
+    <div class="card-header" role="tab" id="heading%num%">
+        <div>
+            %identified%
+            %created%
+            <div class="progress ml-4 w-25 d-inline-block">
+                <div class="progress-bar progress-bar-striped bg-%sla-color%" role="progressbar" style="width: %sla%%" aria-valuenow="%sla%" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+        <h5 class="mb-0">
+            <div style="width: 90%; display: inline-block;">
+                %feedback%
+            </div>
+            <div class="float-right" style="display: inline-block;">
+                <b class="fa fa-thumbs-o-up float-right upvote ml-2" id="upvote-feedback.%uuid%" aria-hidden="true" style="color: %feedback-color%"></b>
+                <div class="float-right" id="count-feedback.%uuid%">%feedback-upvotes%</div>
+            </div>
+        </h5>
+    </div>
+</div>

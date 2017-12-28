@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loading.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/Notify.js') }}"></script>
+    
+    <title>Feedback Tool</title>
+    <script id="feedback-template" type="text/x-custom-template">
+         <div class="card m-2" id="card%num%">
+            <div class="card-header" role="tab" id="heading%num%">
+                <div>
+                    %identified%
+                    %created%
+                    <div class="progress ml-4 w-25 d-inline-block">
+                        <div class="progress-bar progress-bar-striped bg-%sla-color%" role="progressbar" style="width: %sla%%" aria-valuenow="%sla%" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+                <h5 class="mb-0">
+                    <div style="width: 90%; display: inline-block;">
+                        %feedback%
+                    </div>
+                    <div class="float-right" style="display: inline-block;">
+                        <b class="fa fa-thumbs-o-up float-right upvote ml-2" id="upvote-feedback.%uuid%" aria-hidden="true" style="color: %feedback-color%"></b>
+                        <div class="float-right" id="count-feedback.%uuid%">%feedback-upvotes%</div>
+                    </div>
+                </h5>
+            </div>
+        </div>
+    </script>
+    <script id="feedback-answered-template" type="text/x-custom-template">
+         <div class="card m-2" id="card%num%">
+            <div class="card-header" role="tab" id="heading%num%">
+                <div>
+                    %identified%
+                    %created%
+                </div>
+                <h5 class="mb-0">
+                    <div style="width: 90%; display: inline-block;">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse%num%" aria-expanded="true" aria-controls="collapse%num%">
+                              %feedback%
+                        </a>
+                    </div>
+                    <div class="float-right" style="display: inline-block;">
+                        <b class="fa fa-thumbs-o-up float-right upvote ml-2" id="upvote-feedback.%uuid%" aria-hidden="true" style="color: %feedback-color%"></b>
+                        <div class="float-right" id="count-feedback.%uuid%">%feedback-upvotes%</div>
+                    </div>
+                </h5>
+            </div>
+            <div id="collapse%num%" class="collapse" role="tabpanel" aria-labelledby="heading%num%">
+                <div class="card-block">
+                    <div style="display: inline-block; vertical-align: top;">
+                        <div class="p-3 mr-3" style="background: %level-bg%;">
+                            %level%
+                        </div>
+                    </div>
+                    <div style="display: inline-block; width: 90%;">
+                        %response%
+                    </div>
+                    <div class="w-100 text-right">
+                        <br />
+                        <div class="d-inline-block mx-4">
+                            <div class="d-inline-block" id="count-response.%response-uuid%">%response-upvotes%</div>
+                            <div class="d-inline-block">
+                                <b class="fa fa-thumbs-o-up upvote" id="upvote-response.%response-uuid%" aria-hidden="true" style="color: %response-color%"></b>
+                            </div>
+                        </div>
+                        <div class="d-inline-block mx-4">
+                            <b class="fa fa-flag-o flag-response" id="flag-response.%response-uuid%" aria-hidden="true" style="color: %flag-color%"></b>
+                        </div>
+                        <div class="d-inline-block ml-4">
+                            %updated%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+</head>
+
+<body onload="initialize()">
+    <div id="notifications"></div>
+    <nav class="navbar fixed-top navbar-inverse navbar-toggleable-sm" style="background-color: #12929b;">
+        <div class="container">
+            <div class="navbar-nav mr-auto">
+                <img src="{{ url_for('static', filename='assets/horn-invert.png') }}" style="width: 30px; height: 30px;" />
+                <div class="navbar-brand ml-2 mr-5">Feedback Tool</div>
+                <a class="nav-item nav-link mx-5" data-toggle="collapse" data-parent="#accordion" href="#collapseQ" aria-expanded="true" aria-controls="collapseQ" id="submission-nav">Submit</a>
+                <a class="nav-item nav-link mx-5" id="feedback-nav">View Feedback</a>
+                <!-- <a class="nav-item nav-link mx-5">Archive</a> -->
+                <div class="dropdown">
+                    <a class="nav-item nav-link dropdown-toggle mx-5" data-toggle="dropdown" id="servicesDropdown" aria-haspopup="true" aria-expanded="false" href="#">Other Feedback Channels</a>
+                    <div class="dropdown-menu" aria-labelledby="servicesDropdown">
+                        <a class="dropdown-item order-by" href="http://www.rtbanzon.com" target="_blank">Rendell's Website</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container" style="margin-top: 75px">
+        <div id="content">
+            <div id="submission-view" style="display: none;">
+                <div class="row align-content-center p-2">
+                    <div class="col-4 text-center">
+                        <img class="img-fluid" id="horn1" src="{{ url_for('static', filename='assets/horn.png') }}" />
+                    </div>
+                    <div class="form-group col-4 text-center">
+                        <h3 class="p-4">Submit feedback, question, or suggestion!</h3>
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input mb-2" id="identify">
+                            Associate my identity (optional)
+                        </label>
+                        <textarea class="form-control mb-2" id="askFeedback" style="resize: none; height: 200px;" maxlength="1000"></textarea>
+                        <select class="form-control w-100 mb-2" id="assignQueue" style="text-align: center;">
+                            <option>General</option>
+                            <option>Leadership</option>
+                        </select>
+                        <button class="btn btn-outline-primary w-100 submission" type="button" data-toggle="collapse" data-parent="#accordion" href="#collapseQ">Submit</button>
+                    </div>
+                    <div class="col-4 text-center">
+                        <img class="img-fluid" id="horn2" src="{{ url_for('static', filename='assets/horn2.png') }}" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12" id="suggestions"></div>
+                </div>
+            </div>
+            <div id="feedback-view">
+                <div class="text-center mb-4">
+                    <div>
+                        <div class="d-inline-block w-25">
+                            <select class="form-control w-100" id="order-by">
+                                <option>Most Popular</option>
+                                <option>Most Recently Asked</option>
+                            </select>
+                        </div>
+                        <div class="d-inline-block w-25">
+                            <select class="form-control w-100" id="queue-filter">
+                                <option>(All)</option>
+                                <option>General</option>
+                                <option>Leadership</option>
+                            </select>
+                        </div>
+                        <div class="d-inline-block w-25">
+                            <form class="form-inline">
+                                <input class="form-control w-100" id="search" placeholder="Search">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div id="feedback-view-content"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tether.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script>
+        var $SCRIPT_ROOT = {{ request.script_root | tojson | safe }};
+        var token = '{{ csrf_token() }}';
+        var user = {{ user | tojson }};
+        var data = {{ data | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/index-script.js') }}"></script>
+</body>
+
+</html>

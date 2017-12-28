@@ -1,0 +1,46 @@
+a:hover {
+    text-decoration: none;
+}
+
+.item {
+    background: #f0ad4e;
+    text-align: center;
+    border: 1px solid white;
+    max-height: 30px;
+}
+
+.customCard {
+    margin: 20px;
+    border: 1px solid black;
+}
+
+#notifications {
+    cursor: pointer;
+    position: fixed;
+    right: 0px;
+    z-index: 9999;
+    bottom: 0px;
+    margin-bottom: 22px;
+    margin-right: 15px;
+    max-width: 300px;   
+}
+
+a, a:hover, a:active, a:visited, a:focus {
+    text-decoration:none;
+}
+
+.testimonial-group > .row {
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        
+        .testimonial-group > .row > .col-xs-4 {
+          display: inline-block;
+          float: none;
+        }
+        
+        /* Decorations */
+        .col-xs-4 { color: #fff; font-size: 48px; padding-bottom: 20px; padding-top: 18px; }
+        .col-xs-4:nth-child(3n+1) { background: #c69; }
+        .col-xs-4:nth-child(3n+2) { background: #9c6; }
+        .col-xs-4:nth-child(3n+3) { background: #69c; }

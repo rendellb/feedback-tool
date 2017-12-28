@@ -1,0 +1,46 @@
+<div class="card m-2" id="card%num%">
+    <div class="card-header" role="tab" id="heading%num%">
+        <div>
+            %identified%
+            %created%
+        </div>
+        <h5 class="mb-0">
+            <div style="width: 90%; display: inline-block;">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse%num%" aria-expanded="true" aria-controls="collapse%num%">
+                      %feedback%
+                </a>
+            </div>
+            <div class="float-right" style="display: inline-block;">
+                <b class="fa fa-thumbs-o-up float-right upvote ml-2" id="upvote-feedback.%uuid%" aria-hidden="true" style="color: %feedback-color%"></b>
+                <div class="float-right" id="count-feedback.%uuid%">%feedback-upvotes%</div>
+            </div>
+        </h5>
+    </div>
+    <div id="collapse%num%" class="collapse" role="tabpanel" aria-labelledby="heading%num%">
+        <div class="card-block">
+            <div style="display: inline-block; vertical-align: top;">
+                <div class="p-3 mr-3" style="background: %level-bg%;">
+                    %level%
+                </div>
+            </div>
+            <div style="display: inline-block; width: 90%;">
+                %response%
+            </div>
+            <div class="w-100 text-right">
+                <br />
+                <div class="d-inline-block mx-4">
+                    <div class="d-inline-block" id="count-response.%response-uuid%">%response-upvotes%</div>
+                    <div class="d-inline-block">
+                        <b class="fa fa-thumbs-o-up upvote" id="upvote-response.%response-uuid%" aria-hidden="true" style="color: %response-color%"></b>
+                    </div>
+                </div>
+                <div class="d-inline-block mx-4">
+                    <b class="fa fa-flag-o flag-response" id="flag-response.%response-uuid%" aria-hidden="true" style="color: %flag-color%"></b>
+                </div>
+                <div class="d-inline-block ml-4">
+                    %updated%
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
