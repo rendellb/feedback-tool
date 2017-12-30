@@ -1,5 +1,7 @@
-import ConfigParser, io, sys, time, os, requests, datetime, threading, shutil, yagmail, csv, urllib2, random, string, uuid, random
-from werkzeug import secure_filename
+from ConfigParser import RawConfigParser
+from io import BytesIO
+from random import randint
+from yagmail import SMTP
 from functools import update_wrapper, wraps
 from datetime import timedelta, tzinfo
 from os import listdir
@@ -9,8 +11,8 @@ from applicationDB import *
 with open('configs/config.yaml') as f:
     sample_config = f.read()
 
-config = ConfigParser.RawConfigParser(allow_no_value=True)
-config.readfp(io.BytesIO(sample_config))
+config = RawConfigParser(allow_no_value=True)
+config.readfp(BytesIO(sample_config))
 
 appUser = config.get('appdb', 'user')
 appPWD = config.get('appdb', 'passwd')
@@ -111,7 +113,7 @@ def assign():
                 
                 if assign:
                     if len(ops) > 0:
-                        select = random.randint(0, len(ops) - 1)
+                        select = randint(0, len(ops) - 1)
                         assignee = ops[select]
         elif row['level'] == 2:
             if row['assignee'] not in leads:
@@ -151,11 +153,11 @@ def assign():
                         if row['queue'][:3] in adb.getCohorts(lead['email']):
                             subLeads.append(lead)
                     if len(subLeads) > 0:
-                        select = random.randint(0, len(subLeads) - 1)
+                        select = randint(0, len(subLeads) - 1)
                         assignee = subLeads[select]['email']
                 else:
                     if len(activeLeads) > 0:
-                        select = random.randint(0, len(activeLeads) - 1)
+                        select = randint(0, len(activeLeads) - 1)
                         assignee = activeLeads[select]['email']
         elif row['level'] == 3:
             if row['assignee'] not in managers:
@@ -177,14 +179,14 @@ def assign():
                             subManagers.append(manager)
                             
                     if len(subManagers) > 0:
-                        select = random.randint(0, len(subManagers) - 1)
+                        select = randint(0, len(subManagers) - 1)
                         assignee = subManagers[select]
                 else:
-                    select = random.randint(0, len(managers) - 1)
+                    select = randint(0, len(managers) - 1)
                     assignee = managers[select]
         elif row['level'] >= 4:
             if row['assignee'] not in seniors:
-                select = random.randint(0, len(seniors) - 1)
+                select = randint(0, len(seniors) - 1)
                 assignee = seniors[select]
             
         if assignee != '':

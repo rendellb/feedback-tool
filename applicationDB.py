@@ -1,6 +1,8 @@
-import ConfigParser, io, sys, time, os, requests, datetime, threading, shutil, yagmail, csv, urllib2, logging, mysql.connector, random, string, sqlalchemy, uuid
+import datetime
 from sqlalchemy import *
 from mysql.connector import Error
+from urllib2 import unquote
+from uuid import uuid4
 
 class ApplicationDB:
     def __init__(self, host, dbName, user, pwd):
@@ -92,7 +94,7 @@ class ApplicationDB:
     def addFeedback(self, feedback, inquisitor, queue):
         stmt = self.submissions.insert().values(
             create_timestamp = str(datetime.datetime.now()),
-            uuid = str(uuid.uuid4()),
+            uuid = str(uuid4()),
             feedback = str(feedback),
             level = 2,
             queue = str(queue),
@@ -217,7 +219,7 @@ class ApplicationDB:
     def addResponse(self, fuuid, user, response):
         stmt = self.responses.insert().values(
             create_timestamp = str(datetime.datetime.now()),
-            uuid = str(uuid.uuid4()),
+            uuid = str(uuid4()),
             feedback_uuid = str(fuuid),
             last_user = str(user),
             response = str(response),
@@ -228,7 +230,7 @@ class ApplicationDB:
     def addResponsePublished(self, fuuid, user, response):
         stmt = self.responses.insert().values(
             create_timestamp = str(datetime.datetime.now()),
-            uuid = str(uuid.uuid4()),
+            uuid = str(uuid4()),
             feedback_uuid = str(fuuid),
             last_user = str(user),
             response = str(response),
@@ -239,7 +241,7 @@ class ApplicationDB:
     def addAmendment(self, fuuid, user, response):
         stmt = self.responses.insert().values(
             create_timestamp = str(datetime.datetime.now()),
-            uuid = str(uuid.uuid4()),
+            uuid = str(uuid4()),
             feedback_uuid = str(fuuid),
             last_user = str(user),
             response = str(response),
@@ -250,7 +252,7 @@ class ApplicationDB:
     def correctResponse(self, fuuid, ruuid, user, response):
         stmt = self.responses.insert().values(
             create_timestamp = str(datetime.datetime.now()),
-            uuid = str(uuid.uuid4()),
+            uuid = str(uuid4()),
             feedback_uuid = str(fuuid),
             last_user = str(user),
             response = str(response),
@@ -308,7 +310,7 @@ class ApplicationDB:
         stmt = self.responses.insert().values(
             create_timestamp = str(datetime.datetime.now()),
             update_timestamp = str(datetime.datetime.now()),
-            uuid = str(uuid.uuid4()),
+            uuid = str(uuid4()),
             feedback_uuid = str(fuuid),
             last_user = str(user),
             response = str(response),
@@ -346,7 +348,7 @@ class ApplicationDB:
         for row in self.data:
             data.append({'created': row[0], 
                          'updated': row[1], 
-                         'feedback': urllib2.unquote(row[2]), 
+                         'feedback': unquote(row[2]), 
                          'queue': row[3], 
                          'last_user': row[4], 
                          'assignee': row[5], 
@@ -362,7 +364,7 @@ class ApplicationDB:
         for row in self.data:
             data.append({'created': row[0], 
                          'updated': row[1], 
-                         'feedback': urllib2.unquote(row[2]), 
+                         'feedback': unquote(row[2]), 
                          'queue': row[3], 
                          'last_user': row[4], 
                          'assignee': row[5], 
@@ -379,7 +381,7 @@ class ApplicationDB:
             created = datetime.datetime.strftime(row[0], '%m/%d/%Y - %I:%M %p')
             data.append({'created': created, 
                          'updated': row[1], 
-                         'feedback': urllib2.unquote(row[2]), 
+                         'feedback': unquote(row[2]), 
                          'queue': row[3], 
                          'last_user': row[4], 
                          'l2': row[5], 
@@ -397,7 +399,7 @@ class ApplicationDB:
         self.data = self.db.execute(query)
         for row in self.data:
             data.append({'created': row[0], 
-                         'feedback': urllib2.unquote(row[1]), 
+                         'feedback': unquote(row[1]), 
                          'queue': row[2], 
                          'uuid': row[3]})
             
@@ -411,7 +413,7 @@ class ApplicationDB:
             created = datetime.datetime.strftime(row[0], '%m/%d/%Y - %I:%M %p')
             data.append({'created': created, 
                          'updated': row[1], 
-                         'feedback': urllib2.unquote(row[2]), 
+                         'feedback': unquote(row[2]), 
                          'queue': row[3], 
                          'last_user': row[4], 
                          'l2': row[5], 
@@ -459,7 +461,7 @@ class ApplicationDB:
                     response_uuid = response['uuid']
             
             created = datetime.datetime.strftime(row[0], '%m/%d/%Y - %I:%M %p')
-            data.append({'created': created, 'feedback': urllib2.unquote(row[1]), 'queue': row[2], 'uuid': uuid, 'level': row[4], 'inquirer': row[5], 'response': responseStr, 'updated': updated, 'response_uuid': response_uuid})
+            data.append({'created': created, 'feedback': unquote(row[1]), 'queue': row[2], 'uuid': uuid, 'level': row[4], 'inquirer': row[5], 'response': responseStr, 'updated': updated, 'response_uuid': response_uuid})
             
         return data
         
@@ -469,7 +471,7 @@ class ApplicationDB:
         self.data = self.db.execute("SELECT hs.create_timestamp, hs.update_timestamp, hs.feedback, hs.queue, hs.last_user, hs.assignee, hs.uuid, hs.level, hs.claimed, hr.notes, hr.response, hr.uuid, hs.deescalated FROM submissions hs LEFT JOIN responses hr ON hr.feedback_uuid = hs.uuid WHERE ((response IS NULL OR response = '') OR (reviewed = 2)) AND verified = 1 AND assignee = '" + email + "'")
         for row in self.data:
             created = datetime.datetime.strftime(row[0], '%m/%d/%Y - %I:%M %p')
-            data.append({'created': created, 'updated': row[1], 'feedback': urllib2.unquote(row[2]), 'queue': row[3], 'last_user': row[4], 'assignee': row[5], 'uuid': row[6], 'level': row[7], 'claim': row[8], 'notes': row[9], 'response': row[10], 'response_uuid': row[11], 'deescalated': row[12]})
+            data.append({'created': created, 'updated': row[1], 'feedback': unquote(row[2]), 'queue': row[3], 'last_user': row[4], 'assignee': row[5], 'uuid': row[6], 'level': row[7], 'claim': row[8], 'notes': row[9], 'response': row[10], 'response_uuid': row[11], 'deescalated': row[12]})
             
         return data
     
@@ -510,7 +512,7 @@ class ApplicationDB:
         self.data = self.db.execute("SELECT hs.create_timestamp, hs.update_timestamp, hs.feedback, hs.queue, hs.last_user, hs.assignee, hs.uuid, hs.level, hs.claimed, hr.response FROM submissions hs LEFT JOIN responses hr ON hr.feedback_uuid = hs.uuid WHERE (response IS NULL OR response = '') AND verified = 1 AND assignee = 'open'")
         for row in self.data:
             created = datetime.datetime.strftime(row[0], '%m/%d/%Y - %I:%M %p')
-            data.append({'created': created, 'updated': row[1], 'feedback': urllib2.unquote(row[2]), 'queue': row[3], 'last_user': row[4], 'assignee': row[5], 'uuid': row[6], 'level': row[7], 'claim': row[8], 'response': row[9]})
+            data.append({'created': created, 'updated': row[1], 'feedback': unquote(row[2]), 'queue': row[3], 'last_user': row[4], 'assignee': row[5], 'uuid': row[6], 'level': row[7], 'claim': row[8], 'response': row[9]})
             
         return data
     
@@ -520,7 +522,7 @@ class ApplicationDB:
             self.data = self.db.execute("SELECT hs.create_timestamp, hs.update_timestamp, hs.feedback, hs.queue, hs.last_user, hs.assignee, hs.uuid, hs.level, hs.claimed, hr.response, hr.uuid, hs.assignee FROM submissions hs LEFT JOIN responses hr ON hr.feedback_uuid = hs.uuid WHERE hr.reviewed = 0 AND hr.last_user IN (" + emails + ")")
             for row in self.data:
                 created = datetime.datetime.strftime(row[0], '%m/%d/%Y - %I:%M %p')
-                data.append({'created': created, 'updated': row[1], 'feedback': urllib2.unquote(row[2]), 'queue': row[3], 'last_user': row[4], 'assignee': row[5], 'uuid': row[6], 'level': row[7], 'claim': row[8], 'response': row[9], 'response_uuid': row[10], 'assignee': row[11]})
+                data.append({'created': created, 'updated': row[1], 'feedback': unquote(row[2]), 'queue': row[3], 'last_user': row[4], 'assignee': row[5], 'uuid': row[6], 'level': row[7], 'claim': row[8], 'response': row[9], 'response_uuid': row[10], 'assignee': row[11]})
             
         return data
     
@@ -577,7 +579,7 @@ class ApplicationDB:
             created = datetime.datetime.strftime(row[0], '%m/%d/%Y - %I:%M %p')
             
             if responseStr != '':
-                data.append({'created': created, 'feedback': urllib2.unquote(row[1]), 'queue': row[2], 'uuid': uuid, 'level': row[4], 'inquirer': row[5], 'response': responseStr, 'updated': updated, 'response_uuid': response_uuid, 'correct': correct})
+                data.append({'created': created, 'feedback': unquote(row[1]), 'queue': row[2], 'uuid': uuid, 'level': row[4], 'inquirer': row[5], 'response': responseStr, 'updated': updated, 'response_uuid': response_uuid, 'correct': correct})
             
         return data
             

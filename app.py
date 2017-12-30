@@ -1,6 +1,8 @@
-import ConfigParser, io, sys, time, os, requests, datetime, threading, shutil, yagmail, csv, urllib2, logging, random, string, uuid
 from flask import Flask, jsonify, render_template, request, make_response, current_app, Response, json, redirect, url_for, send_from_directory, escape, session, abort
-from werkzeug import secure_filename
+from ConfigParser import RawConfigParser
+from io import BytesIO
+from random import choice
+from string import ascii_uppercase, digits
 from functools import update_wrapper, wraps
 from datetime import timedelta, tzinfo
 from os import listdir
@@ -15,8 +17,8 @@ localUser = 'rendell@rtbanzon.com'
 with open('configs/config.yaml') as f:
     sample_config = f.read()
 
-config = ConfigParser.RawConfigParser(allow_no_value=True)
-config.readfp(io.BytesIO(sample_config))
+config = RawConfigParser(allow_no_value=True)
+config.readfp(BytesIO(sample_config))
 
 appUser = config.get('appdb', 'user')
 appPWD = config.get('appdb', 'passwd')
@@ -27,7 +29,7 @@ def getAuth():
     return localUser
     
 def randomString():
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+    return ''.join(choice(ascii_uppercase + digits) for _ in range(10))
     
 @app.before_request
 def csrf_protect():
